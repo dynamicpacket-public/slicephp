@@ -402,6 +402,18 @@ class CI_Session {
 			$this->CI->db->where('session_id', $this->userdata['session_id']);
 			$this->CI->db->delete($this->sess_table_name);
 		}
+		
+		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
+
+		if ($secure_cookie)
+		{
+			$req = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : FALSE;
+
+			if ( ! $req OR $req == 'off')
+			{
+				return FALSE;
+			}
+		}
 
 		// Kill the cookie
 		setcookie(
@@ -410,7 +422,7 @@ class CI_Session {
 					($this->now - 31500000),
 					$this->cookie_path,
 					$this->cookie_domain,
-					0
+					$secure_cookie
 				);
 	}
 
@@ -660,6 +672,16 @@ class CI_Session {
 		$expire = ($this->sess_expire_on_close === TRUE) ? 0 : $this->sess_expiration + time();
 		
 		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
+
+		if ($secure_cookie)
+		{
+			$req = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : FALSE;
+
+			if ( ! $req OR $req == 'off')
+			{
+				return FALSE;
+			}
+		}
 
 		// Set the cookie
 		setcookie(

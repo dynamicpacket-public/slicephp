@@ -228,6 +228,16 @@ class CI_Input {
 		
 		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
 
+		if ($secure_cookie)
+		{
+			$req = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : FALSE;
+
+			if ( ! $req OR $req == 'off')
+			{
+				return FALSE;
+			}
+		}
+
 		setcookie($prefix.$name, $value, $expire, $path, $domain, $secure_cookie);
 	}
 

@@ -114,6 +114,16 @@ class CI_Security {
 		$expire = time() + $this->csrf_expire;
 		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
 
+		if ($secure_cookie)
+		{
+			$req = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : FALSE;
+
+			if ( ! $req OR $req == 'off')
+			{
+				return FALSE;
+			}
+		}
+
 		setcookie($this->csrf_cookie_name, $this->csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie);
 
 		log_message('debug', "CRSF cookie Set");
