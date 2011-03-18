@@ -333,7 +333,7 @@ class CI_Typography {
 		$str = str_replace("\n\n", "</p>\n\n<p>", $str);
 
 		// Convert single spaces to <br /> tags
-		$str = preg_replace("/([^\n])(\n)([^\n])/", "\\1<br />\\2\\3", $str);
+		$str = preg_replace("/([^\n])(\n)(?=[^\n])/", "\\1<br />\\2\\3", $str);
 
 		// Wrap the whole enchilada in enclosing paragraphs
 		if ($str != "\n")
