@@ -737,22 +737,23 @@ class CI_Security {
 	/**
 	 * Set Cross Site Request Forgery Protection Cookie
 	 *
-	 * @return	null
+	 * @return	string
 	 */
 	protected function _csrf_set_hash()
 	{
 		if ($this->_csrf_hash == '')
 		{
-			// If the cookie exists we will use it's value.  We don't necessarily want to regenerate it with
-			// each page load since a page could contain embedded sub-pages causing this feature to fail
-			if (isset($_COOKIE[$this->csrf_cookie_name]) AND $_COOKIE[$this->csrf_cookie_name] != '')
+			// If the cookie exists we will use it's value.  
+			// We don't necessarily want to regenerate it with
+			// each page load since a page could contain embedded 
+			// sub-pages causing this feature to fail
+			if (isset($_COOKIE[$this->csrf_cookie_name]) && 
+				$_COOKIE[$this->csrf_cookie_name] != '')
 			{
-				$this->_csrf_hash = $_COOKIE[$this->csrf_cookie_name];
+				return $this->_csrf_hash = $_COOKIE[$this->csrf_cookie_name];
 			}
-			else
-			{
-				$this->_csrf_hash = md5(uniqid(rand(), TRUE));
-			}
+			
+			return $this->_csrf_hash = md5(uniqid(rand(), TRUE));
 		}
 
 		return $this->csrf_hash;
