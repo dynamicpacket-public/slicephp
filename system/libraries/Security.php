@@ -328,25 +328,7 @@ class CI_Security {
 
 		unset($original);
 
-		/*
-		 * Remove Evil HTML Attributes (like evenhandlers and style)
-		 *
-		 * Note: This code is a little blunt.  It removes
-		 * the evil attribute and anything up to the closing >,
-		 * but it's unlikely to be a problem.
-		 */
-		$evil_attributes = array('[^a-z_\-]on\w*', 'style', 'xmlns');
-
-		if ($is_image === TRUE)
-		{
-			/*
-			 * Adobe Photoshop puts XML metadata into JFIF images, 
-			 * including namespacing, so we have to allow this for images.
-			 */
-			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
-		}
-
-		$str = preg_replace("#<(/?[^><]+?)(".implode('|', $evil_attributes).")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str);
+		$str = $this->_remove_evil_attributes($str, $is_image);
 
 		/*
 		 * Sanitize naughty HTML elements
@@ -412,11 +394,11 @@ class CI_Security {
 		{
 			if (phpversion() >= 4.2)
 			{
-				mt_srand();				
+				mt_srand();
 			}
 			else
 			{
-				mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);				
+				mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);
 			}
 
 			$this->_xss_hash = md5(time() + mt_rand(0, 1999999999));
@@ -545,6 +527,46 @@ class CI_Security {
 		return preg_replace('/\s+/s', '', $matches[1]).$matches[2];
 	}
 
+	// --------------------------------------------------------------------
+	
+	/*
+	 * Remove Evil HTML Attributes (like evenhandlers and style)
+	 *
+	 * It removes the evil attribute and either:
+	 * 	- Everything up until a space
+	 *		For example, everything between the pipes:
+	 *		<a |style=document.write('hello');alert('world');| class=link>
+	 * 	- Everything inside the quotes 
+	 *		For example, everything between the pipes:
+	 *		<a |style="document.write('hello'); alert('world');"| class="link">
+	 *
+	 * @param string $str The string to check
+	 * @param boolean $is_image TRUE if this is an image
+	 * @return string The string with the evil attributes removed
+	 */
+	protected function _remove_evil_attributes($str, $is_image)
+	{
+		// All javascript event handlers (e.g. onload, onclick, onmouseover), style, and xmlns
+		$evil_attributes = array('[^a-z_\-]on\w*', 'style', 'xmlns');
+
+		if ($is_image === TRUE)
+		{
+			/*
+			 * Adobe Photoshop puts XML metadata into JFIF images, 
+			 * including namespacing, so we have to allow this for images.
+			 */
+			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
+		}
+
+		$str = preg_replace(
+			"#<(/?[^><]+?)[^A-Za-z\-](".implode('|', $evil_attributes).")(\s*=\s*)([\"].*?[\"]|[\'].*?[\']|.*?\s)([><]*)#i", 
+			"<\\1 \\5",
+			$str
+		);
+		
+		return $str;
+	}
+	
 	// --------------------------------------------------------------------
 
 	/**
