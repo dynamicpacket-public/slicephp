@@ -329,13 +329,13 @@ class CI_Security {
 		unset($original);
 
 		/*
-		 * Remove JavaScript Event Handlers
+		 * Remove Evil HTML Attributes (like evenhandlers and style)
 		 *
 		 * Note: This code is a little blunt.  It removes
-		 * the event handler and anything up to the closing >,
+		 * the evil attribute and anything up to the closing >,
 		 * but it's unlikely to be a problem.
 		 */
-		$event_handlers = array('[^a-z_\-]on\w*','xmlns');
+		$evil_attributes = array('[^a-z_\-]on\w*', 'style', 'xmlns');
 
 		if ($is_image === TRUE)
 		{
@@ -343,10 +343,10 @@ class CI_Security {
 			 * Adobe Photoshop puts XML metadata into JFIF images, 
 			 * including namespacing, so we have to allow this for images.
 			 */
-			unset($event_handlers[array_search('xmlns', $event_handlers)]);
+			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
 
-		$str = preg_replace("#<([^><]+?)(".implode('|', $event_handlers).")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str);
+		$str = preg_replace("#</?([^><]+?)(".implode('|', $evil_attributes).")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str);
 
 		/*
 		 * Sanitize naughty HTML elements
