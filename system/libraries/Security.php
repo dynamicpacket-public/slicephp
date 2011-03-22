@@ -33,24 +33,28 @@ class CI_Security {
 
 	/* never allowed, string replacement */
 	var $never_allowed_str = array(
-									'document.cookie'	=> '[removed]',
-									'document.write'	=> '[removed]',
-									'.parentNode'		=> '[removed]',
-									'.innerHTML'		=> '[removed]',
-									'window.location'	=> '[removed]',
-									'-moz-binding'		=> '[removed]',
-									'<!--'				=> '&lt;!--',
-									'-->'				=> '--&gt;',
-									'<![CDATA['			=> '&lt;![CDATA['
-									);
-	/* never allowed, regex replacement */
-	var $never_allowed_regex = array(
-										"javascript\s*:"			=> '[removed]',
-										"expression\s*(\(|&\#40;)"	=> '[removed]', // CSS and IE
-										"vbscript\s*:"				=> '[removed]', // IE, surprise!
-										"Redirect\s+302"			=> '[removed]'
+					'document.cookie'	=> '[removed]',
+					'document.write'	=> '[removed]',
+					'.parentNode'		=> '[removed]',
+					'.innerHTML'		=> '[removed]',
+					'window.location'	=> '[removed]',
+					'-moz-binding'		=> '[removed]',
+					'<!--'				=> '&lt;!--',
+					'-->'				=> '--&gt;',
+					'<![CDATA['			=> '&lt;![CDATA['
 									);
 
+	/* never allowed, regex replacement */
+	var $never_allowed_regex = array(
+					"javascript\s*:"			=> '[removed]',
+					"expression\s*(\(|&\#40;)"	=> '[removed]', // CSS and IE
+					"vbscript\s*:"				=> '[removed]', // IE, surprise!
+					"Redirect\s+302"			=> '[removed]'
+									);
+	
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		// Append application specific cookie prefix to token name
@@ -218,35 +222,7 @@ class CI_Security {
 		 */
 		$str = remove_invisible_characters($str);
 
-		/*
-		 * Protect GET variables in URLs
-		 */
-		
-		 // 901119URL5918AMP18930PROTECT8198
-		
-		$str = preg_replace('|\&([a-z\_0-9\-]+)\=([a-z\_0-9\-]+)|i', $this->xss_hash()."\\1=\\2", $str);
-
-		/*
-		 * Validate standard character entities
-		 *
-		 * Add a semicolon if missing.  We do this to enable
-		 * the conversion of entities to ASCII later.
-		 *
-		 */
-		$str = preg_replace('#(&\#?[0-9a-z]{2,})([\x00-\x20])*;?#i', "\\1;\\2", $str);
-
-		/*
-		 * Validate UTF16 two byte encoding (x00)
-		 *
-		 * Just as above, adds a semicolon if missing.
-		 *
-		 */
-		$str = preg_replace('#(&\#x?)([0-9A-F]+);?#i',"\\1\\2;",$str);
-
-		/*
-		 * Un-Protect GET variables in URLs
-		 */
-		$str = str_replace($this->xss_hash(), '&', $str);
+		$str = $this->_protect_get_vars($str);
 
 		/*
 		 * URL Decode
@@ -283,9 +259,8 @@ class CI_Security {
 		 *
 		 * This prevents strings like this: ja	vascript
 		 * NOTE: we deal with spaces between characters later.
-		 * NOTE: preg_replace was found to be amazingly slow here on large blocks of data,
-		 * so we use str_replace.
-		 *
+		 * NOTE: preg_replace was found to be amazingly slow here on 
+		 * large blocks of data, so we use str_replace.
 		 */
 
 		if (strpos($str, "\t") !== FALSE)
@@ -315,17 +290,17 @@ class CI_Security {
 		/*
 		 * Makes PHP tags safe
 		 *
-		 *  Note: XML tags are inadvertently replaced too:
+		 * Note: XML tags are inadvertently replaced too:
 		 *
-		 *	<?xml
+		 * <?xml
 		 *
 		 * But it doesn't seem to pose a problem.
-		 *
 		 */
 		if ($is_image === TRUE)
 		{
-			// Images have a tendency to have the PHP short opening and closing tags every so often
-			// so we skip those and only do the long opening tags.
+			// Images have a tendency to have the PHP short opening and 
+			// closing tags every so often so we skip those and only 
+			// do the long opening tags.
 			$str = preg_replace('/<\?(php)/i', "&lt;?\\1", $str);
 		}
 		else
@@ -338,9 +313,12 @@ class CI_Security {
 		 *
 		 * This corrects words like:  j a v a s c r i p t
 		 * These words are compacted back to their correct state.
-		 *
 		 */
-		$words = array('javascript', 'expression', 'vbscript', 'script', 'applet', 'alert', 'document', 'write', 'cookie', 'window');
+		$words = array(
+				'javascript', 'expression', 'vbscript', 'script', 
+				'applet', 'alert', 'document', 'write', 'cookie', 'window'
+			);
+			
 		foreach ($words as $word)
 		{
 			$temp = '';
@@ -357,8 +335,9 @@ class CI_Security {
 
 		/*
 		 * Remove disallowed Javascript in links or img tags
-		 * We used to do some version comparisons and use of stripos for PHP5, but it is dog slow compared
-		 * to these simplified non-capturing preg_match(), especially if the pattern exists in the string
+		 * We used to do some version comparisons and use of stripos for PHP5, 
+		 * but it is dog slow compared to these simplified non-capturing 
+		 * preg_match(), especially if the pattern exists in the string
 		 */
 		do
 		{
@@ -389,15 +368,14 @@ class CI_Security {
 		 * Note: This code is a little blunt.  It removes
 		 * the event handler and anything up to the closing >,
 		 * but it's unlikely to be a problem.
-		 *
 		 */
 		$event_handlers = array('[^a-z_\-]on\w*','xmlns');
 
 		if ($is_image === TRUE)
 		{
 			/*
-			 * Adobe Photoshop puts XML metadata into JFIF images, including namespacing,
-			 * so we have to allow this for images. -Paul
+			 * Adobe Photoshop puts XML metadata into JFIF images, 
+			 * including namespacing, so we have to allow this for images.
 			 */
 			unset($event_handlers[array_search('xmlns', $event_handlers)]);
 		}
@@ -412,7 +390,6 @@ class CI_Security {
 		 *
 		 * So this: <blink>
 		 * Becomes: &lt;blink&gt;
-		 *
 		 */
 		$naughty = 'alert|applet|audio|basefont|base|behavior|bgsound|blink|body|embed|expression|form|frameset|frame|head|html|ilayer|iframe|input|isindex|layer|link|meta|object|plaintext|style|script|textarea|title|video|xml|xss';
 		$str = preg_replace_callback('#<(/*\s*)('.$naughty.')([^><]*)([><]*)#is', array($this, '_sanitize_naughty_html'), $str);
@@ -428,7 +405,6 @@ class CI_Security {
 		 *
 		 * For example:	eval('some code')
 		 * Becomes:		eval&#40;'some code'&#41;
-		 *
 		 */
 		$str = preg_replace('#(alert|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)\((.*?)\)#si', "\\1\\2&#40;\\3&#41;", $str);
 
@@ -450,23 +426,18 @@ class CI_Security {
 		}
 
 		/*
-		 *  Images are Handled in a Special Way
-		 *  - Essentially, we want to know that after all of the character conversion is done whether
-		 *  any unwanted, likely XSS, code was found.  If not, we return TRUE, as the image is clean.
-		 *  However, if the string post-conversion does not matched the string post-removal of XSS,
-		 *  then it fails, as there was unwanted XSS code found and removed/changed during processing.
+		 * Images are Handled in a Special Way
+		 * - Essentially, we want to know that after all of the character 
+		 * conversion is done whether any unwanted, likely XSS, code was found.  
+		 * If not, we return TRUE, as the image is clean.
+		 * However, if the string post-conversion does not matched the 
+		 * string post-removal of XSS, then it fails, as there was unwanted XSS 
+		 * code found and removed/changed during processing.
 		 */
 
 		if ($is_image === TRUE)
 		{
-			if ($str == $converted_string)
-			{
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
+			return ($str == $converted_string) ? TRUE: FALSE;
 		}
 
 		log_message('debug', "XSS Filtering completed");
@@ -486,9 +457,13 @@ class CI_Security {
 		if ($this->xss_hash == '')
 		{
 			if (phpversion() >= 4.2)
-				mt_srand();
+			{
+				mt_srand();				
+			}
 			else
-				mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);
+			{
+				mt_srand(hexdec(substr(md5(microtime()), -8)) & 0x7fffffff);				
+			}
 
 			$this->xss_hash = md5(time() + mt_rand(0, 1999999999));
 		}
@@ -735,6 +710,52 @@ class CI_Security {
 
 		return stripslashes(str_replace($bad, '', $str));
 	}
+
+	// ----------------------------------------------------------------
+	
+	/**
+	 * Protect Get Variables
+	 *
+	 * Called by xss_clean()
+	 *
+	 * @param 	string	
+	 * @return 	string
+	 */
+	private function _protect_get_vars($str)
+	{
+		/*
+		 * Protect GET variables in URLs
+		 */
+		
+		 // 901119URL5918AMP18930PROTECT8198
+		
+		$str = preg_replace('|\&([a-z\_0-9\-]+)\=([a-z\_0-9\-]+)|i', $this->xss_hash()."\\1=\\2", $str);
+
+		/*
+		 * Validate standard character entities
+		 *
+		 * Add a semicolon if missing.  We do this to enable
+		 * the conversion of entities to ASCII later.
+		 *
+		 */
+		$str = preg_replace('#(&\#?[0-9a-z]{2,})([\x00-\x20])*;?#i', "\\1;\\2", $str);
+
+		/*
+		 * Validate UTF16 two byte encoding (x00)
+		 *
+		 * Just as above, adds a semicolon if missing.
+		 *
+		 */
+		$str = preg_replace('#(&\#x?)([0-9A-F]+);?#i',"\\1\\2;",$str);
+
+		/*
+		 * Un-Protect GET variables in URLs
+		 */
+		$str = str_replace($this->xss_hash(), '&', $str);
+		
+		return $str;
+	}
+
 
 }
 // END Security Class
