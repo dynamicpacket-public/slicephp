@@ -346,7 +346,7 @@ class CI_Security {
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
 
-		$str = preg_replace("#</?([^><]+?)(".implode('|', $evil_attributes).")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str);
+		$str = preg_replace("#<(/?[^><]+?)(".implode('|', $evil_attributes).")(\s*=\s*[^><]*)([><]*)#i", "<\\1\\4", $str);
 
 		/*
 		 * Sanitize naughty HTML elements
