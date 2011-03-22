@@ -328,6 +328,7 @@ class CI_Security {
 
 		unset($original);
 
+		// Remove evil attributes such as style, onclick and xmlns
 		$str = $this->_remove_evil_attributes($str, $is_image);
 
 		/*
