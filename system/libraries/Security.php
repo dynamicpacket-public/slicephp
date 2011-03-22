@@ -198,8 +198,8 @@ class CI_Security {
 		 */
 		$str = remove_invisible_characters($str);
 
-		// Protect $_GET variables
-		$str = $this->_protect_get_vars($str);
+		// Validate Entities in URLs
+		$str = $this->_validate_entities($str);
 
 		/*
 		 * URL Decode
@@ -665,14 +665,14 @@ class CI_Security {
 	// --------------------------------------------------------------------
 	
 	/**
-	 * Protect Get Variables
+	 * Validate URL entities
 	 *
 	 * Called by xss_clean()
 	 *
 	 * @param 	string	
 	 * @return 	string
 	 */
-	protected function _protect_get_vars($str)
+	protected function _validate_entities($str)
 	{
 		/*
 		 * Protect GET variables in URLs
