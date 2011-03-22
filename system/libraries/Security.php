@@ -59,7 +59,7 @@ class CI_Security {
 	public function __construct()
 	{
 		// Append application specific cookie prefix to token name
-		$this->_csrf_cookie_name = (config_item('cookie_prefix')) ? config_item('cookie_prefix').$this->_csrf_token_name : $this->csrf_token_name;
+		$this->_csrf_cookie_name = (config_item('cookie_prefix')) ? config_item('cookie_prefix').$this->_csrf_token_name : $this->_csrf_token_name;
 
 		// Set the CSRF hash
 		$this->_csrf_set_hash();
@@ -83,24 +83,24 @@ class CI_Security {
 		}
 
 		// Do the tokens exist in both the _POST and _COOKIE arrays?
-		if ( ! isset($_POST[$this->csrf_token_name]) OR 
-			! isset($_COOKIE[$this->csrf_cookie_name]))
+		if ( ! isset($_POST[$this->_csrf_token_name]) OR 
+			! isset($_COOKIE[$this->_csrf_cookie_name]))
 		{
 			$this->csrf_show_error();
 		}
 
 		// Do the tokens match?
-		if ($_POST[$this->csrf_token_name] != $_COOKIE[$this->csrf_cookie_name])
+		if ($_POST[$this->_csrf_token_name] != $_COOKIE[$this->_csrf_cookie_name])
 		{
 			$this->csrf_show_error();
 		}
 
 		// We kill this since we're done and we don't want to 
 		// polute the _POST array
-		unset($_POST[$this->csrf_token_name]);
+		unset($_POST[$this->_csrf_token_name]);
 
 		// Nothing should last forever
-		unset($_COOKIE[$this->csrf_cookie_name]);
+		unset($_COOKIE[$this->_csrf_cookie_name]);
 		$this->_csrf_set_hash();
 		$this->csrf_set_cookie();
 
@@ -118,7 +118,7 @@ class CI_Security {
 	 */
 	public function csrf_set_cookie()
 	{
-		$expire = time() + $this->csrf_expire;
+		$expire = time() + $this->_csrf_expire;
 		$secure_cookie = (config_item('cookie_secure') === TRUE) ? 1 : 0;
 
 		if ($secure_cookie)
@@ -131,7 +131,7 @@ class CI_Security {
 			}
 		}
 
-		setcookie($this->csrf_cookie_name, $this->csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie);
+		setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $expire, config_item('cookie_path'), config_item('cookie_domain'), $secure_cookie);
 
 		log_message('debug', "CRSF cookie Set");
 		
@@ -422,7 +422,7 @@ class CI_Security {
 			$this->_xss_hash = md5(time() + mt_rand(0, 1999999999));
 		}
 
-		return $this->xss_hash;
+		return $this->_xss_hash;
 	}
 
 	// --------------------------------------------------------------------
@@ -747,16 +747,16 @@ class CI_Security {
 			// We don't necessarily want to regenerate it with
 			// each page load since a page could contain embedded 
 			// sub-pages causing this feature to fail
-			if (isset($_COOKIE[$this->csrf_cookie_name]) && 
+			if (isset($_COOKIE[$this->_csrf_cookie_name]) && 
 				$_COOKIE[$this->csrf_cookie_name] != '')
 			{
-				return $this->_csrf_hash = $_COOKIE[$this->csrf_cookie_name];
+				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
 			}
 			
 			return $this->_csrf_hash = md5(uniqid(rand(), TRUE));
 		}
 
-		return $this->csrf_hash;
+		return $this->_csrf_hash;
 	}
 
 }
