@@ -4,3 +4,4 @@ syntax: glob
 
 syntax: regexp
 system/cache/(?!index\.html|\.htaccess)
+application/cache/(?!index\.html|\.htaccess)
