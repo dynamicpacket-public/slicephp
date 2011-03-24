@@ -558,13 +558,16 @@ class CI_Security {
 			 */
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
-
-		$str = preg_replace(
-			"#<(/?[^><]+?)[^A-Za-z\-](".implode('|', $evil_attributes).")(\s*=\s*)([\"].*?[\"]|[\'].*?[\']|.*?\s)([><]*)#i", 
-			"<\\1 \\5",
-			$str
-		);
 		
+		do {
+			$cpy = $str;
+			$str = preg_replace(
+               "#<(/?[^><]+?)[^A-Za-z\-](".implode('|', $evil_attributes).")(\s*=\s*)([\"].*?[\"]|[\'].*?[\']|.*?([\s><]))([><]*)#i", 
+				"<\\1 \\6\\7",
+				$str
+			);
+		} while ($str != $cpy);
+	
 		return $str;
 	}
 	
