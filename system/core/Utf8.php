@@ -101,13 +101,15 @@ class CI_Utf8 {
 	 * line feeds, and carriage returns, as all others can cause
 	 * problems in XML
 	 *
-	 * @access	public
+	 * @deprecated 	in 2.0.1 @see CI_Input::remove_unsafe_control_chars()
 	 * @param	string
 	 * @return	string
 	 */
-	function safe_ascii_for_xml($str)
+	public function safe_ascii_for_xml($str)
 	{
-		return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $str);
+		$_security =& load_class('Security');
+		
+		return $_security->remove_unsafe_control_chars($str);
 	}
 
 	// --------------------------------------------------------------------
