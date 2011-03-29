@@ -70,6 +70,23 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Remove ASCII control characters
+	 *
+	 * Removes all ASCII control characters except horizontal tabs,
+	 * line feeds, and carriage returns, as all others can cause
+	 * problems in XML
+	 *
+	 * @param	string
+	 * @return	string
+	 */
+	public function remove_unsafe_control_chars($str)
+	{
+		return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $str);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Verify Cross Site Request Forgery Protection
 	 *
 	 * @return	object
