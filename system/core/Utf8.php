@@ -101,7 +101,7 @@ class CI_Utf8 {
 	 * line feeds, and carriage returns, as all others can cause
 	 * problems in XML
 	 *
-	 * @deprecated 	in 2.0.1 @see CI_Input::remove_unsafe_control_chars()
+	 * @deprecated 	in 2.0.1 @see CI_Security::remove_unsafe_control_chars()
 	 * @param	string
 	 * @return	string
 	 */
