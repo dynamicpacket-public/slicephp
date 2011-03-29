@@ -22,7 +22,7 @@
  * @subpackage	Libraries
  * @category	Security
  * @author		ExpressionEngine Dev Team
- * @link		http://codeigniter.com/user_guide/libraries/sessions.html
+ * @link		http://codeigniter.com/user_guide/libraries/security.html
  */
 class CI_Security {
 	
