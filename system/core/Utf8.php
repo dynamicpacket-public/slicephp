@@ -106,7 +106,7 @@ class CI_Utf8 {
 	 */
 	public function safe_ascii_for_xml($str)
 	{
-		$_security =& load_class('Security');
+		$_security =& load_class('Security', 'core');
 		
 		return $_security->remove_unsafe_control_chars($str);
 	}

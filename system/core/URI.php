@@ -28,8 +28,9 @@
  */
 class CI_URI {
 
-	var	$keyval			= array();
 	var $uri_string;
+
+	var	$keyval			= array();
 	var $segments		= array();
 	var $rsegments		= array();
 
