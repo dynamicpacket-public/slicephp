@@ -45,28 +45,7 @@ if ( ! function_exists('read_file'))
 			return FALSE;
 		}
 
-		if (function_exists('file_get_contents'))
-		{
-			return file_get_contents($file);
-		}
-
-		if ( ! $fp = @fopen($file, FOPEN_READ))
-		{
-			return FALSE;
-		}
-
-		flock($fp, LOCK_SH);
-
-		$data = '';
-		if (filesize($file) > 0)
-		{
-			$data =& fread($fp, filesize($file));
-		}
-
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		return $data;
+		return file_get_contents($file);
 	}
 }
 

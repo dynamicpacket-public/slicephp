@@ -73,7 +73,7 @@ File Helper
 
 <code>$string = read_file('./path/to/file.php');</code>
 
-<p>The path can be a relative or full server path.  Returns FALSE (boolean) on failure.</p>
+<p>The path can be a relative or full server path. Unlike PHP's native file_put_contents, <kbd>read_file()</kbd> will not attempt to open remote urls.  Returns FALSE (boolean) on failure.</p>
 
 <p class="important"><strong>Note:</strong> The path is relative to your main site index.php file, NOT your controller or view files.
 CodeIgniter uses a front controller so paths are always relative to the main site index.</p>
