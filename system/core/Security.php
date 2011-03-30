@@ -565,7 +565,7 @@ class CI_Security {
 	protected function _remove_evil_attributes($str, $is_image)
 	{
 		// All javascript event handlers (e.g. onload, onclick, onmouseover), style, and xmlns
-		$evil_attributes = array('[^a-z_\-]on\w*', 'style', 'xmlns');
+		$evil_attributes = array('on\w*', 'style', 'xmlns');
 
 		if ($is_image === TRUE)
 		{
@@ -576,11 +576,11 @@ class CI_Security {
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
 		
-		do {
+		do {			
 			$cpy = $str;
 			$str = preg_replace(
-               "#<(/?[^><]+?)[^A-Za-z\-](".implode('|', $evil_attributes).")(\s*=\s*)([\"].*?[\"]|[\'].*?[\']|.*?([\s><]))([><]*)#i", 
-				"<\\1 \\6\\7",
+				"#<(/?[^><]+?)([^A-Za-z\-])(".implode('|', $evil_attributes).")(\s*=\s*)([\"][^>]*?[\"]|[\'][^>]*?[\']|[^>]*?)([\s><])([><]*)#i",
+				"<$1$6",
 				$str
 			);
 		} while ($str != $cpy);
