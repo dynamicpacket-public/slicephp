@@ -170,6 +170,34 @@ class CI_Security {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Get CSRF Hash 
+	 *
+	 * Getter Method 
+	 *
+	 * @return 	string 	self::_csrf_hash
+	 */
+	public function get_csrf_hash()
+	{
+		return $this->_csrf_hash;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Get CSRF Token Name
+	 *
+	 * Getter Method
+	 *
+	 * @return 	string 	self::csrf_token_name
+	 */
+	public function get_csrf_token_name()
+	{
+		return $this->_csrf_token_name;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * XSS Clean
 	 *
 	 * Sanitizes data so that Cross Site Scripting Hacks can be
