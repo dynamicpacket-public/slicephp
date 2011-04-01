@@ -43,7 +43,7 @@ class CI_Security {
 					'<!--'				=> '&lt;!--',
 					'-->'				=> '--&gt;',
 					'<![CDATA['			=> '&lt;![CDATA['
-									);
+	);
 
 	/* never allowed, regex replacement */
 	protected $_never_allowed_regex = array(
@@ -51,7 +51,7 @@ class CI_Security {
 					"expression\s*(\(|&\#40;)"	=> '[removed]', // CSS and IE
 					"vbscript\s*:"				=> '[removed]', // IE, surprise!
 					"Redirect\s+302"			=> '[removed]'
-									);
+	);
 	
 	/**
 	 * Constructor
@@ -65,23 +65,6 @@ class CI_Security {
 		$this->_csrf_set_hash();
 
 		log_message('debug', "Security Class Initialized");
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Remove ASCII control characters
-	 *
-	 * Removes all ASCII control characters except horizontal tabs,
-	 * line feeds, and carriage returns, as all others can cause
-	 * problems in XML
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function remove_unsafe_control_chars($str)
-	{
-		return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -101,7 +84,7 @@ class CI_Security {
 
 		// Do the tokens exist in both the _POST and _COOKIE arrays?
 		if ( ! isset($_POST[$this->_csrf_token_name]) OR 
-			! isset($_COOKIE[$this->_csrf_cookie_name]))
+			 ! isset($_COOKIE[$this->_csrf_cookie_name]))
 		{
 			$this->csrf_show_error();
 		}
@@ -554,6 +537,7 @@ class CI_Security {
 			$bad[] = '/';
 		}
 
+		$str = remove_invisible_characters($str, FALSE);
 		return stripslashes(str_replace($bad, '', $str));
 	}
 
@@ -604,15 +588,14 @@ class CI_Security {
 			unset($evil_attributes[array_search('xmlns', $evil_attributes)]);
 		}
 		
-		do {			
-			$cpy = $str;
+		do {
 			$str = preg_replace(
 				"#<(/?[^><]+?)([^A-Za-z\-])(".implode('|', $evil_attributes).")(\s*=\s*)([\"][^>]*?[\"]|[\'][^>]*?[\']|[^>]*?)([\s><])([><]*)#i",
 				"<$1$6",
-				$str
+				$str, -1, $count
 			);
-		} while ($str != $cpy);
-	
+		} while ($count);
+		
 		return $str;
 	}
 	
