@@ -30,7 +30,6 @@ class CI_Router {
 
 	var $config;
 	var $routes			= array();
-	var $error_routes	= array();
 	var $class			= '';
 	var $method			= 'index';
 	var $directory		= '';
