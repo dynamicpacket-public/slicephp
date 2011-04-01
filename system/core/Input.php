@@ -53,7 +53,8 @@ class CI_Input {
 		$this->_enable_xss		= (config_item('global_xss_filtering') === TRUE) ? TRUE : FALSE;
 		$this->_enable_csrf		= (config_item('csrf_protection') === TRUE) ? TRUE : FALSE;
 
-		$this->security =& load_class('Security', 'core');
+		global $SEC;
+		$this->security =& $SEC;
 
 		// Do we need the UTF-8 class?
 		if (UTF8_ENABLED === TRUE)
@@ -511,7 +512,7 @@ class CI_Input {
 		}
 		
 		// Remove control characters
-		$str = $this->security->remove_unsafe_control_chars($str);
+		$str = remove_invisible_characters($str);
 
 		// Should we filter the input data?
 		if ($this->_enable_xss === TRUE)
