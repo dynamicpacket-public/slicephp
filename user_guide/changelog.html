@@ -63,12 +63,17 @@ Change Log
 <ul>
 	<li>General changes
 		<ul>
+			<li>The CI_SHA class is now deprecated. All supported versions of PHP provide a <kbd>sha1()</kbd> function.</li>
+			<li>The <a href="./libraries/security.html">Security library</a> was moved to the core and is now loaded automatically.</li>
 			<li>Added <kbd>$config['cookie_secure']</kbd> to the config file to allow requiring a secure (HTTPS) in order to set cookies.</li>
 			<li class="reactor">Added the constant <kbd>CI_CORE</kbd> to help differentiate between Core: TRUE and Reactor: FALSE.</li>
-			<li>Deprecated <kbd>Utf8::safe_ascii_for_xml()</kbd> and moved the function to <kbd>Security::remove_unsafe_control_chars()</kbd>.</li>
-			<li>Enforcing public/protected visibility on method names and class variables in the Security Class.  Added getter methods to access protected class properties.</li>
+			<li>Enforcing public/protected visibility on method names and class variables in the <a href="./libraries/security.html">Security library</a>. Added getter methods to access protected class properties.</li>
 		</ul>
 	</li>
+	<li>Helpers
+		<ul>
+			<li>Removed the previously deprecated <kbd>dohash()</kbd> from the <a href="./helpers/security_helper.html">Security helper</a>; use <kbd>do_hash()</kbd> instead.</li>
+		</ul>
 </ul>
 
 <h3>Bug Fixes for 2.0.1</h3>
