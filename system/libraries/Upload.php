@@ -864,12 +864,6 @@ class CI_Upload {
 		}
 
 		$CI =& get_instance();
-
-		if ( ! isset($CI->security))
-		{
-			$CI->load->library('security');
-		}
-
 		return $CI->security->xss_clean($data, TRUE);
 	}
 
