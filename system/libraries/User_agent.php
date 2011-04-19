@@ -84,7 +84,7 @@ class CI_User_agent {
 	 */
 	function _load_agent_file()
 	{
-		if ( ! @include(APPPATH.'config/user_agents'.EXT))
+		if ( ! @include(APPPATH.'config/user_agents.php'))
 		{
 			return FALSE;
 		}

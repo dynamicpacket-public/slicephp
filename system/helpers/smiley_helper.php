@@ -229,12 +229,12 @@ if ( ! function_exists('_get_smiley_array'))
 {
 	function _get_smiley_array()
 	{
-		if ( ! file_exists(APPPATH.'config/smileys'.EXT))
+		if ( ! file_exists(APPPATH.'config/smileys.php'))
 		{
 			return FALSE;
 		}
 
-		include(APPPATH.'config/smileys'.EXT);
+		include(APPPATH.'config/smileys.php');
 
 		if ( ! isset($smileys) OR ! is_array($smileys))
 		{

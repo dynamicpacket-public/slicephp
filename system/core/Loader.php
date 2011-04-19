@@ -161,7 +161,7 @@ class CI_Loader {
 
 		foreach ($this->_ci_model_paths as $mod_path)
 		{
-			if ( ! file_exists($mod_path.'models/'.$path.$model.EXT))
+			if ( ! file_exists($mod_path.'models/'.$path.$model.'.php'))
 			{
 				continue;
 			}
@@ -181,7 +181,7 @@ class CI_Loader {
 				load_class('Model', 'core');
 			}
 
-			require_once($mod_path.'models/'.$path.$model.EXT);
+			require_once($mod_path.'models/'.$path.$model.'.php');
 
 			$model = ucfirst($model);
 
@@ -217,7 +217,7 @@ class CI_Loader {
 			return FALSE;
 		}
 
-		require_once(BASEPATH.'database/DB'.EXT);
+		require_once(BASEPATH.'database/DB.php');
 
 		if ($return === TRUE)
 		{
@@ -253,8 +253,8 @@ class CI_Loader {
 		// this use is deprecated and strongly discouraged
 		$CI->load->dbforge();
 
-		require_once(BASEPATH.'database/DB_utility'.EXT);
-		require_once(BASEPATH.'database/drivers/'.$CI->db->dbdriver.'/'.$CI->db->dbdriver.'_utility'.EXT);
+		require_once(BASEPATH.'database/DB_utility.php');
+		require_once(BASEPATH.'database/drivers/'.$CI->db->dbdriver.'/'.$CI->db->dbdriver.'_utility.php');
 		$class = 'CI_DB_'.$CI->db->dbdriver.'_utility';
 
 		$CI->dbutil = new $class();
@@ -277,8 +277,8 @@ class CI_Loader {
 
 		$CI =& get_instance();
 
-		require_once(BASEPATH.'database/DB_forge'.EXT);
-		require_once(BASEPATH.'database/drivers/'.$CI->db->dbdriver.'/'.$CI->db->dbdriver.'_forge'.EXT);
+		require_once(BASEPATH.'database/DB_forge.php');
+		require_once(BASEPATH.'database/drivers/'.$CI->db->dbdriver.'/'.$CI->db->dbdriver.'_forge.php');
 		$class = 'CI_DB_'.$CI->db->dbdriver.'_forge';
 
 		$CI->dbforge = new $class();
@@ -375,16 +375,16 @@ class CI_Loader {
 				continue;
 			}
 
-			$ext_helper = APPPATH.'helpers/'.config_item('subclass_prefix').$helper.EXT;
+			$ext_helper = APPPATH.'helpers/'.config_item('subclass_prefix').$helper.'.php';
 
 			// Is this a helper extension request?
 			if (file_exists($ext_helper))
 			{
-				$base_helper = BASEPATH.'helpers/'.$helper.EXT;
+				$base_helper = BASEPATH.'helpers/'.$helper.'.php';
 
 				if ( ! file_exists($base_helper))
 				{
-					show_error('Unable to load the requested file: helpers/'.$helper.EXT);
+					show_error('Unable to load the requested file: helpers/'.$helper.'.php');
 				}
 
 				include_once($ext_helper);
@@ -398,9 +398,9 @@ class CI_Loader {
 			// Try to load the helper
 			foreach ($this->_ci_helper_paths as $path)
 			{
-				if (file_exists($path.'helpers/'.$helper.EXT))
+				if (file_exists($path.'helpers/'.$helper.'.php'))
 				{
-					include_once($path.'helpers/'.$helper.EXT);
+					include_once($path.'helpers/'.$helper.'.php');
 
 					$this->_ci_helpers[$helper] = TRUE;
 					log_message('debug', 'Helper loaded: '.$helper);
@@ -411,7 +411,7 @@ class CI_Loader {
 			// unable to load the helper
 			if ( ! isset($this->_ci_helpers[$helper]))
 			{
-				show_error('Unable to load the requested file: helpers/'.$helper.EXT);
+				show_error('Unable to load the requested file: helpers/'.$helper.'.php');
 			}
 		}
 	}
@@ -490,7 +490,7 @@ class CI_Loader {
 		if ( ! class_exists('CI_Driver_Library'))
 		{
 			// we aren't instantiating an object here, that'll be done by the Library itself
-			require BASEPATH.'libraries/Driver'.EXT;
+			require BASEPATH.'libraries/Driver.php';
 		}
 
 		// We can save the loader some time since Drivers will *always* be in a subfolder,
@@ -600,7 +600,7 @@ class CI_Loader {
 		if ($_ci_path == '')
 		{
 			$_ci_ext = pathinfo($_ci_view, PATHINFO_EXTENSION);
-			$_ci_file = ($_ci_ext == '') ? $_ci_view.EXT : $_ci_view;
+			$_ci_file = ($_ci_ext == '') ? $_ci_view.'.php' : $_ci_view;
 			$_ci_path = $this->_ci_view_path.$_ci_file;
 		}
 		else
@@ -716,7 +716,7 @@ class CI_Loader {
 		// Get the class name, and while we're at it trim any slashes.
 		// The directory path can be included as part of the class name,
 		// but we don't want a leading slash
-		$class = str_replace(EXT, '', trim($class, '/'));
+		$class = str_replace('.php', '', trim($class, '/'));
 
 		// Was the path included with the class name?
 		// We look for a slash to determine this
@@ -733,12 +733,12 @@ class CI_Loader {
 		// We'll test for both lowercase and capitalized versions of the file name
 		foreach (array(ucfirst($class), strtolower($class)) as $class)
 		{
-			$subclass = APPPATH.'libraries/'.$subdir.config_item('subclass_prefix').$class.EXT;
+			$subclass = APPPATH.'libraries/'.$subdir.config_item('subclass_prefix').$class.'.php';
 
 			// Is this a class extension request?
 			if (file_exists($subclass))
 			{
-				$baseclass = BASEPATH.'libraries/'.ucfirst($class).EXT;
+				$baseclass = BASEPATH.'libraries/'.ucfirst($class).'.php';
 
 				if ( ! file_exists($baseclass))
 				{
@@ -777,7 +777,7 @@ class CI_Loader {
 			$is_duplicate = FALSE;
 			foreach ($this->_ci_library_paths as $path)
 			{
-				$filepath = $path.'libraries/'.$subdir.$class.EXT;
+				$filepath = $path.'libraries/'.$subdir.$class.'.php';
 
 				// Does the file exist?  No?  Bummer...
 				if ( ! file_exists($filepath))
@@ -846,13 +846,13 @@ class CI_Loader {
 		{
 			// We test for both uppercase and lowercase, for servers that
 			// are case-sensitive with regard to file names
-			if (file_exists(APPPATH.'config/'.strtolower($class).EXT))
+			if (file_exists(APPPATH.'config/'.strtolower($class).'.php'))
 			{
-				include_once(APPPATH.'config/'.strtolower($class).EXT);
+				include_once(APPPATH.'config/'.strtolower($class).'.php');
 			}
-			elseif (file_exists(APPPATH.'config/'.ucfirst(strtolower($class)).EXT))
+			elseif (file_exists(APPPATH.'config/'.ucfirst(strtolower($class)).'.php'))
 			{
-				include_once(APPPATH.'config/'.ucfirst(strtolower($class)).EXT);
+				include_once(APPPATH.'config/'.ucfirst(strtolower($class)).'.php');
 			}
 		}
 
@@ -925,7 +925,7 @@ class CI_Loader {
 	 */
 	function _ci_autoloader()
 	{
-		include_once(APPPATH.'config/autoload'.EXT);
+		include_once(APPPATH.'config/autoload.php');
 
 		if ( ! isset($autoload))
 		{
@@ -1036,13 +1036,13 @@ class CI_Loader {
 	{
 		if ( ! is_array($filename))
 		{
-			return array(strtolower(str_replace(EXT, '', str_replace($extension, '', $filename)).$extension));
+			return array(strtolower(str_replace('.php', '', str_replace($extension, '', $filename)).$extension));
 		}
 		else
 		{
 			foreach ($filename as $key => $val)
 			{
-				$filename[$key] = strtolower(str_replace(EXT, '', str_replace($extension, '', $val)).$extension);
+				$filename[$key] = strtolower(str_replace('.php', '', str_replace($extension, '', $val)).$extension);
 			}
 
 			return $filename;
