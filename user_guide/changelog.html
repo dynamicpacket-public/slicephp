@@ -74,6 +74,11 @@ Change Log
 			<li>Added an optional third parameter to <samp>heading()</samp> which allows adding html attributes to the rendered heading tag.</li>
 		</ul>
 	</li>
+	<li>Libraries
+		<ul>
+			<li>Altered Session to use a longer match against the user_agent string. See upgrade notes if using database sessions.</li>
+		</ul>
+	</li>
 </ul>
 
 <h3>Bug Fixes for 2.0.2</h3>
@@ -82,6 +87,8 @@ Change Log
 		<ul>
 			<li>Fixed a bug where there was a misspelling within a code comment in the index.php file.</li> 
 			<li>Fixed a bug where the csrf cookie name was overwritten with token name.  Thanks <a href="https://bitbucket.org/patwork">patwork</a> for the patch.</li>
+			<li>Fixed a bug (Reactor #231) where Sessions Library database table example SQL did not contain an index on last_activity. See <a href="installation/upgrade_203.html">Upgrade Notes</a>.</li>
+			<li>Fixed a bug (Reactor #229) where the Sessions Library example SQL in the documentation contained incorrect SQL.</li>
 		</ul>
 	</li>
 	
