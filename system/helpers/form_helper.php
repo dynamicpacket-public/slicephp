@@ -1016,7 +1016,6 @@ if ( ! function_exists('_attributes_to_string'))
  * Determines what the form validation class was instantiated as, fetches
  * the object and returns it.
  *
- * @access	private
  * @return	mixed
  */
 if ( ! function_exists('_get_validation_object'))
@@ -1025,22 +1024,20 @@ if ( ! function_exists('_get_validation_object'))
 	{
 		$CI =& get_instance();
 
-		// We set this as a variable since we're returning by reference
+		// We set this as a variable since we're returning by reference.
 		$return = FALSE;
-
-		if ( ! isset($CI->load->_ci_classes) OR  ! isset($CI->load->_ci_classes['form_validation']))
+		
+		if (FALSE !== ($object = $CI->load->is_loaded('form_validation')))
 		{
-			return $return;
+			if ( ! isset($CI->$object) OR ! is_object($CI->$object))
+			{
+				return $return;
+			}
+			
+			return $CI->$object;
 		}
-
-		$object = $CI->load->_ci_classes['form_validation'];
-
-		if ( ! isset($CI->$object) OR ! is_object($CI->$object))
-		{
-			return $return;
-		}
-
-		return $CI->$object;
+		
+		return $return;
 	}
 }
 
