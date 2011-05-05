@@ -24,6 +24,7 @@ class MY_Controller extends CI_Controller {
 		
 		// make sure we load auth lib
 		$this->load->library('auth');
+		$this->load->library('carabiner');
 	}
 
 ///////////////////////////////////////////////////////////
@@ -273,4 +274,3 @@ class MY_Controller extends CI_Controller {
 	}
 }
 
-?>
